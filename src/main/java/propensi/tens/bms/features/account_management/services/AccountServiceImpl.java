@@ -128,6 +128,9 @@ public class AccountServiceImpl implements AccountService {
                 headBar.setDateOfBirth(dateOfBirth);
                 headBar.setIsVerified(false);
                 headBarDb.save(headBar);
+
+                outlet.setHeadbar(headBar);
+			    outletDb.save(outlet);
                 break;
 
             case "barista":

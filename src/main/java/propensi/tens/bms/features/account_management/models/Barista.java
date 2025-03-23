@@ -14,4 +14,7 @@ public class Barista extends EndUser {
     @JoinColumn(name = "outlet_id", referencedColumnName = "outletId")
     private Outlet outlet;
 
+    @Column(name = "is_trainee", nullable = false)
+    private Boolean isTrainee;
+
 }

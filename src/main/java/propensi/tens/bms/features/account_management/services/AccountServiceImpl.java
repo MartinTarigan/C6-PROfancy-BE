@@ -142,7 +142,24 @@ public class AccountServiceImpl implements AccountService {
                 barista.setOutlet(outlet);
                 barista.setDateOfBirth(dateOfBirth);
                 barista.setIsVerified(false);
+                barista.setIsTrainee(false);
                 baristaDb.save(barista);
+                break;
+
+            case "trainee barista":
+                Barista tbarista = new Barista();
+                tbarista.setFullName(fullName);
+                tbarista.setUsername(username);
+                tbarista.setPassword(hashedPassword);
+                tbarista.setGender(gender);
+                tbarista.setPhoneNumber(phoneNumber);
+                tbarista.setAddress(addresss);
+                tbarista.setStatus(status);
+                tbarista.setOutlet(outlet);
+                tbarista.setDateOfBirth(dateOfBirth);
+                tbarista.setIsVerified(false);
+                tbarista.setIsTrainee(true);
+                baristaDb.save(tbarista);
                 break;
 
             case "probation barista":

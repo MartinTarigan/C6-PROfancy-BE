@@ -121,12 +121,11 @@ public class AccountController {
             @RequestBody UpdatePersonalDataDTO dto) {
         BaseResponseDTO<EndUser> response = new BaseResponseDTO<>();
         try {
-            EndUser updatedUser = accountService.updateUserPersonalData(username, dto);
+            accountService.updateUserPersonalData(username, dto);
 
             response.setStatus(HttpStatus.OK.value());
             response.setMessage("Data personal user berhasil diperbarui.");
             response.setTimestamp(new Date());
-            response.setData(updatedUser);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {

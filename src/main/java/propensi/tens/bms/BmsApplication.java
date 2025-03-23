@@ -32,9 +32,6 @@ public class BmsApplication {
     @Autowired
     private AccountService userService;
 
-	@Autowired
-    private OutletDb outletDb;
-
     @Bean
     @Transactional
     CommandLineRunner run(AdminDb adminDb, OutletDb outletDb, BaristaDb baristaDb,
@@ -120,6 +117,7 @@ public class BmsApplication {
         barista.setStatus("Active");
         barista.setIsVerified(true);
         barista.setOutlet(outlet);
+        barista.setIsTrainee(false);
         return barista;
     }
 

@@ -286,15 +286,49 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public EndUser updateAccountRoleAndStatus(String username, UpdateAccountRoleStatusDTO dto) throws Exception {
+public EndUser updateAccountRoleAndStatus(String username, UpdateAccountRoleStatusDTO dto) throws Exception {
         EndUser oldUser = endUserDb.findByUsername(username);
 
         System.out.println(oldUser.getFullName());
         System.out.println(oldUser.getId());
-                
 
-        String newRole = dto.getRole(); 
+        String newRole = dto.getRole();
         String newStatus = dto.getStatus();
+        
+        String currentRole = "";
+        if (oldUser instanceof Admin) {
+            currentRole = "admin";
+        } else if (oldUser instanceof HeadBar) {
+            currentRole = "head bar";
+        } else if (oldUser instanceof Barista) {
+            currentRole = "barista";
+        } else if (oldUser instanceof ProbationBarista) {
+            currentRole = "probation barista";
+        } else if (oldUser instanceof CLevel) {
+            currentRole = ((CLevel) oldUser).getCLevelType().toLowerCase();
+        } else {
+            throw new Exception("Unknown user type");
+        }
+
+        EndUser updatedUser;
+        
+        if (newRole.equalsIgnoreCase(currentRole)) {
+            oldUser.setStatus(newStatus);
+            if (oldUser instanceof Admin) {
+                updatedUser = adminDb.save((Admin) oldUser);
+            } else if (oldUser instanceof HeadBar) {
+                updatedUser = headBarDb.save((HeadBar) oldUser);
+            } else if (oldUser instanceof Barista) {
+                updatedUser = baristaDb.save((Barista) oldUser);
+            } else if (oldUser instanceof ProbationBarista) {
+                updatedUser = probationBaristaDb.save((ProbationBarista) oldUser);
+            } else if (oldUser instanceof CLevel) {
+                updatedUser = cLevelDb.save((CLevel) oldUser);
+            } else {
+                throw new Exception("Unknown user type.");
+            }
+            return updatedUser;
+        }
 
         UUID userId = oldUser.getId();
         String oldUsername = oldUser.getUsername();
@@ -309,7 +343,6 @@ public class AccountServiceImpl implements AccountService {
         if (oldUser instanceof Barista) {
             Barista oldBarista = baristaDb.findById(userId).orElse(null);
             oldOutlet = outletDb.findByOutletId(oldBarista.getOutlet().getOutletId());
-            
         }
 
         if (oldUser instanceof HeadBar) {
@@ -323,8 +356,6 @@ public class AccountServiceImpl implements AccountService {
 
         endUserDb.delete(oldUser);
 
-
-        EndUser updatedUser;
         switch (newRole.toLowerCase()) {
             case "admin":
                 Admin admin = new Admin();
@@ -369,9 +400,8 @@ public class AccountServiceImpl implements AccountService {
                 headBar.setDateOfBirth(oldDateOfBirth);
                 headBar.setStatus(newStatus);
                 headBar.setOutlet(oldOutlet);
-                
                 updatedUser = headBarDb.save(headBar);
-
+                
                 oldOutlet.setHeadbar(headBar);
                 outletDb.save(oldOutlet);
                 break;
@@ -388,7 +418,6 @@ public class AccountServiceImpl implements AccountService {
                 barista.setDateOfBirth(oldDateOfBirth);
                 barista.setStatus(newStatus);
                 barista.setOutlet(oldOutlet);
-                
                 updatedUser = baristaDb.save(barista);
                 
                 oldOutlet.getListBarista().add(barista);
@@ -415,6 +444,7 @@ public class AccountServiceImpl implements AccountService {
 
         return updatedUser;
     }
+
 
     @Override
     public EndUser updateUserPersonalData(String username, UpdatePersonalDataDTO dto) throws Exception {
